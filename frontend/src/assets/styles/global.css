@@ -525,6 +525,22 @@ label input[type="checkbox"] {
   transform: translate(-50%, -50%);
 }
 
+.poker-table-timer {
+  position: absolute;
+  top: 66%;
+  left: 50%;
+  z-index: 8;
+  width: min(86%, 520px);
+  display: grid;
+  justify-items: center;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.poker-table-timer .turn-timer {
+  pointer-events: auto;
+}
+
 .phase-badge {
   color: rgba(225, 232, 255, 0.52);
   font-size: 10px;
@@ -3436,5 +3452,695 @@ label input[type="checkbox"] {
 
   .mobile-table-chat-input {
     grid-template-columns: minmax(0, 1fr) 58px;
+  }
+}
+
+@media (max-width: 720px) {
+  .arena-main.mobile-view-table .arena-stage-card {
+    grid-template-rows: minmax(78px, 0.55fr) minmax(188px, 1.08fr) minmax(132px, 0.82fr) !important;
+    gap: 8px;
+    padding: 40px 9px 9px;
+    overflow: hidden;
+  }
+
+  .arena-main.mobile-view-table .arena-status-strip {
+    top: 8px;
+    right: 9px;
+    left: 9px;
+    min-width: 0;
+    min-height: 30px;
+    border-color: rgba(132, 151, 196, 0.14);
+    background: rgba(6, 12, 25, 0.72);
+  }
+
+  .arena-main.mobile-view-table .poker-table-wrapper {
+    container-type: size;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 2px 0 0 !important;
+    overflow: hidden !important;
+  }
+
+  .arena-main.mobile-view-table .poker-table {
+    width: min(100%, 430px) !important;
+    width: min(100%, 168cqh, 430px) !important;
+    max-width: 100% !important;
+    max-height: 100%;
+  }
+
+  .arena-main.mobile-view-table .poker-table::before {
+    inset: 18% 5% 14%;
+    background:
+      linear-gradient(180deg, rgba(167, 121, 255, 0.84), rgba(78, 44, 153, 0.92));
+    box-shadow:
+      0 0 0 4px rgba(24, 18, 55, 0.95),
+      0 0 0 8px rgba(139, 109, 255, 0.14),
+      0 18px 46px rgba(0, 0, 0, 0.48),
+      0 0 30px rgba(139, 109, 255, 0.22);
+  }
+
+  .arena-main.mobile-view-table .poker-table-felt {
+    inset: 24% 9% 21%;
+    background:
+      radial-gradient(ellipse at 50% 36%, rgba(40, 55, 78, 0.9), rgba(13, 22, 38, 0.97) 58%, rgba(5, 11, 23, 0.98) 100%);
+  }
+
+  .arena-main.mobile-view-table .poker-table-vignette {
+    background:
+      radial-gradient(circle at 50% 50%, transparent 0 40%, rgba(48, 215, 208, 0.055) 41%, transparent 55%),
+      radial-gradient(ellipse at 52% 52%, transparent 0 62%, rgba(0, 0, 0, 0.38) 100%);
+  }
+
+  .arena-main.mobile-view-table .poker-table-center {
+    width: 76%;
+    gap: 4px;
+  }
+
+  .arena-main.mobile-view-table .community-cards {
+    gap: 4px;
+  }
+
+  .arena-main.mobile-view-table .pot-display {
+    min-height: 28px;
+    padding: 0 10px;
+  }
+
+  .arena-main.mobile-view-table .turn-timer {
+    width: min(100%, 170px);
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: rgba(4, 11, 22, 0.82);
+  }
+
+  .arena-main.mobile-view-table .turn-timer-player {
+    margin: 2px 0 6px;
+  }
+
+  .arena-main.mobile-view-table .table-seat {
+    transform: translate(-50%, -50%) scale(0.84) !important;
+  }
+
+  .arena-main.mobile-view-table .seat-index-0 { top: 84% !important; left: 50% !important; }
+  .arena-main.mobile-view-table .seat-index-1 { top: 74% !important; left: 30% !important; }
+  .arena-main.mobile-view-table .seat-index-2 { top: 53% !important; left: 11% !important; }
+  .arena-main.mobile-view-table .seat-index-3 { top: 31% !important; left: 22% !important; }
+  .arena-main.mobile-view-table .seat-index-4 { top: 17% !important; left: 41% !important; }
+  .arena-main.mobile-view-table .seat-index-5 { top: 17% !important; left: 62% !important; }
+  .arena-main.mobile-view-table .seat-index-6 { top: 31% !important; left: 80% !important; }
+  .arena-main.mobile-view-table .seat-index-7 { top: 53% !important; left: 89% !important; }
+  .arena-main.mobile-view-table .seat-index-8 { top: 74% !important; left: 72% !important; }
+  .arena-main.mobile-view-table .seat-index-9 { top: 84% !important; left: 58% !important; }
+
+  .arena-main.mobile-view-table .player-seat {
+    width: auto;
+    max-width: 112px;
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active {
+    transform: scale(1.04);
+  }
+
+  .arena-main.mobile-view-table .seat-avatar {
+    width: 30px;
+    height: 30px;
+    border-color: rgba(145, 118, 255, 0.72);
+    box-shadow:
+      0 0 0 3px rgba(16, 23, 45, 0.82),
+      0 0 14px rgba(139, 109, 255, 0.24);
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .seat-avatar {
+    width: 36px;
+    height: 36px;
+    border-color: rgba(48, 215, 208, 0.86);
+    box-shadow:
+      0 0 0 3px rgba(16, 23, 45, 0.86),
+      0 0 24px rgba(48, 215, 208, 0.52);
+  }
+
+  .arena-main.mobile-view-table .seat-number {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+  }
+
+  .arena-main.mobile-view-table .player-seat:not(.is-active) .seat-panel {
+    display: none !important;
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .seat-panel {
+    min-width: 92px;
+    max-width: min(34vw, 126px);
+    padding: 5px 7px;
+    border-radius: 9px;
+    background: rgba(6, 18, 32, 0.9);
+  }
+
+  .arena-main.mobile-view-table .seat-title-row strong {
+    max-width: 104px;
+    font-size: 9px;
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .player-hand {
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .arena-main.mobile-view-table .action-indicator {
+    top: -19px;
+    max-width: 76px;
+    padding: 3px 6px;
+    border-color: rgba(48, 215, 208, 0.24);
+    background: rgba(4, 11, 22, 0.82);
+    font-size: 8px;
+  }
+
+  .arena-main.mobile-view-table .mobile-table-feed {
+    border-color: rgba(132, 151, 196, 0.16);
+    border-radius: 14px;
+    background:
+      linear-gradient(180deg, rgba(15, 27, 50, 0.76), rgba(5, 11, 24, 0.76)),
+      rgba(5, 11, 24, 0.72);
+    box-shadow: inset 0 1px 18px rgba(255, 255, 255, 0.03);
+  }
+
+  .arena-main.mobile-view-table .mobile-table-thinking.is-live {
+    border-color: rgba(48, 215, 208, 0.34);
+    background:
+      linear-gradient(135deg, rgba(48, 215, 208, 0.11), rgba(139, 109, 255, 0.07)),
+      rgba(5, 12, 25, 0.8);
+  }
+
+  .arena-main.mobile-view-table .mobile-feed-head {
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+
+  .arena-main.mobile-view-table .mobile-feed-head strong {
+    flex: 0 1 auto;
+    max-width: 58%;
+    text-align: right;
+  }
+
+  .arena-main.mobile-view-table .mobile-table-thinking p {
+    font-size: 11px;
+    line-height: 1.48;
+  }
+
+  .arena-main.mobile-view-table .mobile-table-chat {
+    gap: 7px;
+    padding: 8px;
+    overflow: hidden;
+  }
+
+  .arena-main.mobile-view-table .mobile-chat-snippets {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding-right: 2px;
+    scrollbar-width: thin;
+  }
+
+  .arena-main.mobile-view-table .mobile-chat-snippet {
+    padding: 7px 8px;
+    border-color: rgba(132, 151, 196, 0.1);
+    background: rgba(8, 16, 32, 0.56);
+  }
+
+  .arena-main.mobile-view-table .mobile-empty-copy {
+    padding: 4px 0;
+  }
+
+  .arena-main.mobile-view-table .mobile-table-chat-input {
+    flex: 0 0 auto;
+    grid-template-columns: minmax(0, 1fr) 56px;
+    gap: 6px;
+    margin-top: 0;
+  }
+
+  .arena-main.mobile-view-table .mobile-table-chat-input input,
+  .arena-main.mobile-view-table .mobile-table-chat-input button {
+    width: 100%;
+    min-height: 34px;
+    border-radius: 11px;
+  }
+
+  .arena-main.mobile-view-table .mobile-table-chat-input button {
+    display: grid;
+    place-items: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .arena-main.mobile-view-table .arena-stage-card {
+    grid-template-rows: minmax(72px, 0.5fr) minmax(176px, 1.02fr) minmax(126px, 0.78fr) !important;
+    gap: 7px;
+    padding: 39px 8px 8px;
+  }
+
+  .arena-main.mobile-view-table .poker-table {
+    width: min(100%, 168cqh, 390px) !important;
+  }
+
+  .arena-main.mobile-view-table .table-seat {
+    transform: translate(-50%, -50%) scale(0.8) !important;
+  }
+
+  .arena-main.mobile-view-table .seat-index-2 { left: 12% !important; }
+  .arena-main.mobile-view-table .seat-index-7 { left: 88% !important; }
+
+  .arena-main.mobile-view-table .seat-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .seat-avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .seat-panel {
+    min-width: 86px;
+    max-width: min(36vw, 114px);
+  }
+
+  .arena-main.mobile-view-table .mobile-table-thinking p,
+  .arena-main.mobile-view-table .mobile-chat-snippet span {
+    font-size: 11px;
+  }
+
+  .arena-main.mobile-view-table .mobile-table-chat-input {
+    grid-template-columns: minmax(0, 1fr) 52px;
+  }
+}
+
+@media (max-width: 720px) {
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .seat-panel {
+    display: block !important;
+    top: calc(100% + 3px);
+    bottom: auto;
+    left: 50%;
+    min-width: 0;
+    max-width: none;
+    padding: 3px;
+    border-color: rgba(132, 151, 196, 0.14);
+    border-radius: 7px;
+    background: rgba(5, 11, 24, 0.72);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+  }
+
+  .arena-main.mobile-view-table .poker-table.cards-visible .seat-index-3 .player-seat:not(.is-active) .seat-panel,
+  .arena-main.mobile-view-table .poker-table.cards-visible .seat-index-4 .player-seat:not(.is-active) .seat-panel,
+  .arena-main.mobile-view-table .poker-table.cards-visible .seat-index-5 .player-seat:not(.is-active) .seat-panel,
+  .arena-main.mobile-view-table .poker-table.cards-visible .seat-index-6 .player-seat:not(.is-active) .seat-panel {
+    top: auto;
+    bottom: calc(100% + 4px);
+  }
+
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .seat-title-row,
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .seat-status-row,
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .seat-stack-row {
+    display: none !important;
+  }
+
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .player-hand {
+    display: flex !important;
+    gap: 2px;
+    margin: 0;
+  }
+
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .hand-card {
+    width: 20px;
+    height: 29px;
+    border-radius: 4px;
+  }
+
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-back-pattern {
+    inset: 4px;
+    background-size: 8px 8px;
+  }
+
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-corner {
+    font-size: 7px;
+  }
+
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-corner.top {
+    top: 3px;
+    left: 3px;
+  }
+
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-corner.bottom {
+    right: 3px;
+    bottom: 3px;
+  }
+
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-symbol {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 420px) {
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .hand-card {
+    width: 18px;
+    height: 26px;
+  }
+
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-symbol {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 720px) {
+  .arena-main.mobile-view-table .poker-table {
+    --community-card-width: 32px;
+    --community-card-height: 46px;
+  }
+
+  .arena-main.mobile-view-table .poker-table-center {
+    top: 63%;
+    width: 72%;
+    gap: 3px;
+  }
+
+  .arena-main.mobile-view-table .community-cards {
+    gap: 3px;
+  }
+
+  .arena-main.mobile-view-table .community-card {
+    border-radius: 6px;
+    box-shadow: 0 7px 16px rgba(0, 0, 0, 0.28);
+  }
+
+  .arena-main.mobile-view-table .community-card .card-corner {
+    font-size: 7px;
+  }
+
+  .arena-main.mobile-view-table .community-card .card-symbol {
+    font-size: 16px;
+  }
+
+  .arena-main.mobile-view-table .pot-display {
+    min-height: 24px;
+    padding: 0 9px;
+    border-color: rgba(255, 210, 77, 0.18);
+    background: rgba(5, 9, 18, 0.5);
+  }
+
+  .arena-main.mobile-view-table .pot-display span {
+    font-size: 10px;
+  }
+
+  .arena-main.mobile-view-table .pot-display strong {
+    font-size: 13px;
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer {
+    top: 41%;
+    left: 50%;
+    width: 136px;
+    transform: translate(-50%, -50%);
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer {
+    width: 100%;
+    padding: 5px 8px 6px;
+    border-radius: 999px;
+    background: rgba(4, 11, 22, 0.84);
+    box-shadow: 0 0 16px rgba(48, 215, 208, 0.14);
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer-head {
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 9px;
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer-head span {
+    display: none;
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer-head strong {
+    font-size: 13px;
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer-player {
+    display: none;
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer-track {
+    height: 4px;
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 420px) {
+  .arena-main.mobile-view-table .poker-table {
+    --community-card-width: 29px;
+    --community-card-height: 42px;
+  }
+
+  .arena-main.mobile-view-table .poker-table-center {
+    top: 64%;
+    width: 74%;
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer {
+    top: 41%;
+    width: 122px;
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer {
+    padding: 5px 7px;
+  }
+}
+
+@media (min-width: 721px) {
+  .player-seat {
+    width: clamp(132px, 11vw, 158px);
+    transform-origin: center;
+  }
+
+  .player-seat.is-active {
+    transform: scale(1.025);
+  }
+
+  .player-seat.is-muted {
+    opacity: 0.46;
+    filter: saturate(0.65);
+  }
+
+  .seat-avatar {
+    width: clamp(48px, 4.4vw, 58px);
+    height: clamp(48px, 4.4vw, 58px);
+    border-width: 1px;
+    border-color: rgba(141, 157, 210, 0.5);
+    background:
+      radial-gradient(circle at 35% 28%, rgba(48, 215, 208, 0.5), transparent 23%),
+      linear-gradient(145deg, #17213d, #080e1d);
+    box-shadow:
+      0 0 0 3px rgba(10, 16, 32, 0.72),
+      0 10px 22px rgba(0, 0, 0, 0.28);
+  }
+
+  .player-seat.is-active .seat-avatar {
+    border-color: rgba(48, 215, 208, 0.76);
+    box-shadow:
+      0 0 0 3px rgba(8, 21, 34, 0.82),
+      0 0 20px rgba(48, 215, 208, 0.34);
+  }
+
+  .seat-number {
+    width: 20px;
+    height: 20px;
+    border-color: rgba(175, 188, 226, 0.28);
+    background: rgba(47, 56, 83, 0.86);
+    font-size: 10px;
+  }
+
+  .seat-panel {
+    margin-left: -16px;
+    padding: 8px 9px 8px 24px;
+    border-color: rgba(132, 151, 196, 0.16);
+    border-radius: 9px;
+    background: rgba(8, 14, 27, 0.66);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.035),
+      0 10px 24px rgba(0, 0, 0, 0.24);
+    backdrop-filter: blur(10px);
+  }
+
+  .player-seat.is-active .seat-panel {
+    border-color: rgba(48, 215, 208, 0.58);
+    background:
+      linear-gradient(180deg, rgba(11, 28, 39, 0.72), rgba(7, 15, 28, 0.76));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 0 0 1px rgba(48, 215, 208, 0.08),
+      0 12px 28px rgba(0, 0, 0, 0.28),
+      0 0 20px rgba(48, 215, 208, 0.16);
+  }
+
+  .seat-title-row {
+    gap: 6px;
+  }
+
+  .seat-title-row strong {
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .dealer-badge {
+    width: 18px;
+    height: 18px;
+    background: rgba(139, 109, 255, 0.9);
+    font-size: 10px;
+  }
+
+  .seat-status-row {
+    margin: 2px 0 6px;
+    color: rgba(184, 195, 222, 0.72);
+    font-size: 10px;
+  }
+
+  .seat-status-row em {
+    color: #f7d967;
+  }
+
+  .player-hand {
+    gap: 6px;
+  }
+
+  .seat-stack-row {
+    margin-top: 6px;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .chip-stack {
+    gap: 5px;
+  }
+
+  .chip-stack-tokens {
+    width: 18px;
+    opacity: 0.82;
+  }
+
+  .chip-token {
+    width: 18px;
+    height: 18px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(178, 152, 255, 0.55);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
+  }
+
+  .chip-token::after {
+    inset: 4px;
+  }
+
+  .chip-stack strong {
+    color: #f4d76a;
+    font-size: 12px;
+  }
+
+  .seat-bet {
+    padding: 2px 6px;
+    border-color: rgba(255, 210, 77, 0.18);
+    background: rgba(255, 210, 77, 0.08);
+    color: rgba(255, 226, 121, 0.92);
+    font-size: 10px;
+  }
+
+  .action-indicator {
+    right: 8px;
+    bottom: -17px;
+    padding: 3px 7px;
+    border-color: rgba(132, 151, 196, 0.16);
+    background: rgba(5, 10, 20, 0.78);
+    color: rgba(219, 234, 254, 0.86);
+    font-size: 9px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+  }
+}
+
+@media (max-width: 720px) {
+  .arena-main.mobile-view-table .player-seat.is-active {
+    transform: scale(1);
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .seat-avatar {
+    width: 32px;
+    height: 32px;
+    border-color: rgba(48, 215, 208, 0.58);
+    box-shadow:
+      0 0 0 2px rgba(12, 24, 42, 0.82),
+      0 0 14px rgba(48, 215, 208, 0.28);
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .seat-panel {
+    min-width: 78px;
+    max-width: min(30vw, 104px);
+    padding: 4px 5px;
+    border-color: rgba(132, 151, 196, 0.16);
+    border-radius: 8px;
+    background: rgba(5, 11, 24, 0.58);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .seat-title-row {
+    margin-bottom: 3px;
+    justify-content: center;
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .seat-title-row strong {
+    max-width: 88px;
+    color: rgba(238, 243, 255, 0.9);
+    font-size: 8px;
+    font-weight: 760;
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .player-hand {
+    gap: 2px;
+    margin-top: 0;
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .hand-card {
+    width: 18px;
+    height: 26px;
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .card-symbol {
+    font-size: 12px;
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer,
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer.is-urgent {
+    border-color: rgba(132, 151, 196, 0.22);
+    background: rgba(4, 10, 20, 0.72);
+    box-shadow: none;
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer-head strong,
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer.is-urgent .turn-timer-head strong {
+    color: rgba(238, 243, 255, 0.92);
+  }
+
+  .arena-main.mobile-view-table .poker-table-timer .turn-timer.is-urgent .turn-timer-track span {
+    background: linear-gradient(90deg, rgba(255, 93, 112, 0.82), rgba(245, 158, 11, 0.82));
+    animation: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .arena-main.mobile-view-table .player-seat.is-active .seat-avatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .arena-main.mobile-view-table .player-seat.is-active .seat-panel {
+    min-width: 74px;
+    max-width: min(32vw, 96px);
   }
 }

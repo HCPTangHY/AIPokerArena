@@ -70,19 +70,21 @@ export function PokerTable({ gameState, showCards }: Props) {
 
   return (
     <div className="poker-table-wrapper">
-      <div className="poker-table" aria-label="德州扑克牌桌">
+      <div className={`poker-table ${showCards ? 'cards-visible' : 'cards-hidden'}`} aria-label="德州扑克牌桌">
         <div className="poker-table-felt">
           <div className="poker-table-vignette" />
           <div className="poker-table-center">
             <PotDisplay amount={totalPot} pots={pots} />
             <CommunityCards cards={community_cards} />
             <div className="phase-badge">{PHASE_LABELS[phase] || phase}</div>
-            <TurnTimer
-              playerName={activePlayer?.display_name ?? ''}
-              deadlineTs={timer?.deadlineTs}
-              timeoutSeconds={timer?.timeoutSeconds}
-            />
           </div>
+        </div>
+        <div className="poker-table-timer">
+          <TurnTimer
+            playerName={activePlayer?.display_name ?? ''}
+            deadlineTs={timer?.deadlineTs}
+            timeoutSeconds={timer?.timeoutSeconds}
+          />
         </div>
 
         {players.map((player) => {

@@ -56,9 +56,6 @@ export function PlayerSeat({ player, isDealer, isActive, showCards }: Props) {
 
         <div className="seat-stack-row">
           <ChipStack amount={player.chips} />
-          {player.bet_this_round > 0 && (
-            <span className="seat-bet">下注 {player.bet_this_round}</span>
-          )}
         </div>
       </div>
 

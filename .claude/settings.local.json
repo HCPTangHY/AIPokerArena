@@ -23,7 +23,15 @@
       "WebFetch(domain:api-docs.deepseek.com)",
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(git -C /g/Development/AIPokerArena checkout -- frontend/src/pages/ConfigPage.tsx)",
-      "Bash(python -c \"from treys import Deck; d = Deck\\(\\); print\\([a for a in dir\\(d\\) if not a.startswith\\('_'\\)]\\)\")"
+      "Bash(python -c \"from treys import Deck; d = Deck\\(\\); print\\([a for a in dir\\(d\\) if not a.startswith\\('_'\\)]\\)\")",
+      "Bash(netstat -ano)",
+      "Bash(findstr :1455)",
+      "Bash(tasklist /FI \"PID eq 262260\" /FO LIST)",
+      "Bash(cmd /c \"tasklist /FI \\\\\"PID eq 262260\\\\\" /FO LIST\")",
+      "Bash(powershell -Command \"Get-Process -Id 262260 | Format-List *\")",
+      "Bash(powershell -Command \"Stop-Process -Id 262260 -Force\")",
+      "Bash(powershell -Command \"Get-Process -Id 283240 | Format-List Name,Id,Path\")",
+      "Bash(powershell -Command \"Stop-Process -Id 283240 -Force\")"
     ]
   }
 }
