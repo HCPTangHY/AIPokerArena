@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npm --version)",
+      "Bash(pip install *)",
+      "Bash(python -c \"from treys import Card, Deck, Evaluator; print\\('treys OK:', Card.int_to_pretty_str\\(Deck\\(\\).draw\\(\\)\\)\\); print\\('eval OK:', Evaluator\\(\\).evaluate\\([], []\\)\\)\")",
+      "Bash(python -c \"from treys import Card, Deck, Evaluator; d = Deck\\(\\); c = d.draw\\(\\); print\\('Card int:', c\\); print\\('Card str:', Card.int_to_pretty_str\\(c\\)\\); print\\('Deck size:', len\\(d\\)\\)\")",
+      "Bash(python -c \"from treys import Deck; d = Deck\\(\\); c = d.draw\\(\\); print\\(type\\(c\\).__name__, c\\); c2 = d.draw\\(1\\); print\\(type\\(c2\\).__name__, c2\\); c3 = d.draw\\(3\\); print\\(type\\(c3\\).__name__, c3\\)\")",
+      "Bash(python -c \"from treys import Deck; d = Deck\\(\\); c = d.draw\\(\\); print\\(c, type\\(c\\)\\); c2 = d.draw\\(\\); print\\(c2, type\\(c2\\)\\)\")",
+      "Bash(python -c \"from app.core.deck import Deck; d = Deck\\(\\); d.shuffle\\(\\); c = d.draw\\(2\\); print\\('Cards:', c\\); print\\('Deck size:', len\\(d\\)\\)\")",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(python -c \"from app.main import app; print\\('FastAPI app OK'\\)\")",
+      "Bash(python -c \"from app.main import app; print\\('FastAPI app OK, routes:', [r.path for r in app.routes]\\)\")",
+      "Bash(python -c \"import sys; sys.path.insert\\(0, '.'\\); from app.main import app; print\\('FastAPI app OK, routes:', [r.path for r in app.routes]\\)\")",
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(npx vite *)",
+      "Bash(python -c ' *)",
+      "Bash(python -c \"import sys; sys.path.insert\\(0, '/g/Development/AIPokerArena/backend'\\); from app.core.engine import PokerEngine; from app.models.tournament import TournamentConfig, ActionType; from app.models.player import AIPlayerConfig; from app.models.game import PlayerAction; print\\('Import OK'\\)\")",
+      "Bash(python -c \"import os; os.chdir\\('g:/Development/AIPokerArena/backend'\\); from treys import Card, Deck; d = Deck\\(\\); c = d.draw\\(1\\); print\\('raw:', c\\); s = Card.int_to_pretty_str\\(c[0]\\); print\\('str:', repr\\(s\\), 'len:', len\\(s\\)\\)\")",
+      "Bash(python -m pytest /g/Development/AIPokerArena/backend/tests/ -v)",
+      "WebFetch(domain:api-docs.deepseek.com)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(git -C /g/Development/AIPokerArena checkout -- frontend/src/pages/ConfigPage.tsx)",
+      "Bash(python -c \"from treys import Deck; d = Deck\\(\\); print\\([a for a in dir\\(d\\) if not a.startswith\\('_'\\)]\\)\")"
+    ]
+  }
+}

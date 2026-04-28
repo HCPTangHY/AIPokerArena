@@ -1,0 +1,143 @@
+tournament:
+  name: AI Poker Tournament
+  initial_chips: 2000
+  small_blind_initial: 5
+  big_blind_initial: 10
+  blind_level_minutes: 30
+  blind_levels:
+  - level: 1
+    small_blind: 25
+    big_blind: 50
+    ante: 0
+  - level: 2
+    small_blind: 50
+    big_blind: 100
+    ante: 0
+  - level: 3
+    small_blind: 100
+    big_blind: 200
+    ante: 0
+  - level: 4
+    small_blind: 150
+    big_blind: 300
+    ante: 25
+  - level: 5
+    small_blind: 200
+    big_blind: 400
+    ante: 50
+  - level: 6
+    small_blind: 300
+    big_blind: 600
+    ante: 75
+  - level: 7
+    small_blind: 500
+    big_blind: 1000
+    ante: 100
+  - level: 8
+    small_blind: 1000
+    big_blind: 2000
+    ante: 200
+  ante_enabled: false
+  ante_start_level: 4
+  max_players: 10
+  action_timeout_seconds: 90
+players:
+- id: deepseek-v4p
+  display_name: DeepSeek V4 Pro
+  api_endpoint: https://api.deepseek.com/v1
+  api_key: sk-962c14e4281e4d1dbe3ef4df058263a9
+  model_name: deepseek-v4-pro
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 0
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/deepseek-color.png
+- id: deepseek-v4f
+  display_name: DeepSeek V4 Flash
+  api_endpoint: https://api.deepseek.com/v1
+  api_key: sk-962c14e4281e4d1dbe3ef4df058263a9
+  model_name: deepseek-v4-flash
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 0
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/deepseek-color.png
+- id: claude46
+  display_name: Claude Opus 4.6
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: claude-opus-4-6
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/claude-color.png
+- id: claude47
+  display_name: Claude Opus 4.7
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: claude-opus-4-7
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/claude-color.png
+- id: gpt55
+  display_name: GPT-5.5
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: gpt-5.5
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/openai.png
+- id: kimi
+  display_name: DeepSeek R1 0528
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: Deepseek-R1-250528
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/deepseek-color.png
+- id: glm
+  display_name: GLM 5.1
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: glm-5.1
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/zhipu-color.png
+- id: qwen
+  display_name: Qwen 3.6 Plus
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: qwen3.6-plus
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/qwen-color.png
+- id: gemini
+  display_name: Gemini 3.1 Pro Preview
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: gemini-3.1-pro-preview
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/gemini-color.png
