@@ -31,7 +31,10 @@
       "Bash(powershell -Command \"Get-Process -Id 262260 | Format-List *\")",
       "Bash(powershell -Command \"Stop-Process -Id 262260 -Force\")",
       "Bash(powershell -Command \"Get-Process -Id 283240 | Format-List Name,Id,Path\")",
-      "Bash(powershell -Command \"Stop-Process -Id 283240 -Force\")"
+      "Bash(powershell -Command \"Stop-Process -Id 283240 -Force\")",
+      "Bash(npm run *)",
+      "Bash(cp -r dist/* ../backend/static/)",
+      "Bash(python -m pytest tests/ -x -q)"
     ]
   }
 }

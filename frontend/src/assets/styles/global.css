@@ -549,6 +549,24 @@ label input[type="checkbox"] {
   text-transform: uppercase;
 }
 
+.table-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.blinds-badge {
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  padding: 2px 10px;
+  border: 1px solid rgba(255, 210, 77, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 210, 77, 0.08);
+}
+
 .pot-display {
   display: inline-flex;
   align-items: center;
@@ -880,16 +898,16 @@ label input[type="checkbox"] {
 .action-indicator {
   position: absolute;
   right: 6px;
-  bottom: -20px;
+  bottom: -24px;
   z-index: 4;
   max-width: calc(100% - 12px);
-  padding: 4px 8px;
+  padding: 5px 11px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 999px;
-  background: rgba(5, 9, 18, 0.78);
+  background: rgba(5, 9, 18, 0.82);
   color: #dbeafe;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -900,9 +918,42 @@ label input[type="checkbox"] {
 .action-check { color: #7dd3fc; }
 .action-call { color: #86efac; }
 .action-raise { color: #fca5a5; }
+.action-small_blind,
+.action-big_blind { color: #fcd34d; }
 .action-all_in {
-  color: var(--gold);
-  animation: pulse 0.55s ease-in-out 3;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(255, 56, 56, 0.9), 0 0 28px rgba(255, 160, 0, 0.7);
+  border-color: rgba(255, 56, 56, 0.7);
+  background: linear-gradient(135deg, rgba(180, 20, 20, 0.75), rgba(200, 60, 20, 0.65));
+  box-shadow: 0 0 18px rgba(255, 56, 56, 0.45), 0 0 36px rgba(255, 120, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: allinShock 0.3s ease-out 3;
+}
+
+.action-allin-fire {
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 50%, rgba(255, 200, 0, 0.25), transparent 60%),
+              radial-gradient(circle at 70% 50%, rgba(255, 80, 0, 0.2), transparent 60%);
+  animation: allinGlow 0.6s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes allinShock {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.18) rotate(-2deg); }
+  30% { transform: scale(1.06) rotate(1deg); }
+  45% { transform: scale(1.12) rotate(-1deg); }
+  60% { transform: scale(1.03) rotate(0.5deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+@keyframes allinGlow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 .turn-timer {
@@ -2328,7 +2379,8 @@ label input[type="checkbox"] {
   }
 
   .pot-display em,
-  .phase-badge {
+  .phase-badge,
+  .blinds-badge {
     display: none;
   }
 
@@ -2468,9 +2520,9 @@ label input[type="checkbox"] {
     top: -20px;
     right: 50%;
     bottom: auto;
-    max-width: 86px;
-    padding: 3px 6px;
-    font-size: 9px;
+    max-width: 96px;
+    padding: 4px 8px;
+    font-size: 10px;
     transform: translateX(50%);
   }
 
@@ -3610,11 +3662,11 @@ label input[type="checkbox"] {
 
   .arena-main.mobile-view-table .action-indicator {
     top: -19px;
-    max-width: 76px;
-    padding: 3px 6px;
+    max-width: 86px;
+    padding: 4px 7px;
     border-color: rgba(48, 215, 208, 0.24);
     background: rgba(4, 11, 22, 0.82);
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .arena-main.mobile-view-table .mobile-table-feed {
@@ -3781,18 +3833,8 @@ label input[type="checkbox"] {
     background-size: 8px 8px;
   }
 
-  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-corner {
-    font-size: 7px;
-  }
-
-  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-corner.top {
-    top: 3px;
-    left: 3px;
-  }
-
-  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-corner.bottom {
-    right: 3px;
-    bottom: 3px;
+  .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-corner small {
+    display: none;
   }
 
   .arena-main.mobile-view-table .poker-table.cards-visible .player-seat:not(.is-active) .card-symbol {
@@ -3832,8 +3874,9 @@ label input[type="checkbox"] {
     box-shadow: 0 7px 16px rgba(0, 0, 0, 0.28);
   }
 
-  .arena-main.mobile-view-table .community-card .card-corner {
-    font-size: 7px;
+  .arena-main.mobile-view-table .community-card .card-corner small,
+  .arena-main.mobile-view-table .hand-card .card-corner small {
+    display: none;
   }
 
   .arena-main.mobile-view-table .community-card .card-symbol {
@@ -4056,11 +4099,11 @@ label input[type="checkbox"] {
   .action-indicator {
     right: 8px;
     bottom: -17px;
-    padding: 3px 7px;
+    padding: 4px 8px;
     border-color: rgba(132, 151, 196, 0.16);
     background: rgba(5, 10, 20, 0.78);
     color: rgba(219, 234, 254, 0.86);
-    font-size: 9px;
+    font-size: 10px;
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
   }
 }

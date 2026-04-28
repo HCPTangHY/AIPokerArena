@@ -222,7 +222,7 @@ class PromptBuilder:
         active_players = [p for p in state.players if p.chips > 0 or p.is_all_in]
         for p in active_players:
 
-            pos = self._get_position_name(p.seat_index, state.dealer_index, len(state.players))
+            pos = self._get_position_name(p.seat_index, state)
             you = "（你）" if p.player_id == player.player_id else ""
 
             status = ""
@@ -250,22 +250,28 @@ class PromptBuilder:
                 lines.append(f"  - call（跟注 {to_call}）")
             elif a == ActionType.RAISE:
                 min_r = state.current_bet + state.min_raise
-                max_r = player.chips + state.round_bets.get(player.player_id, 0) - to_call
+                max_r = player.chips + state.round_bets.get(player.player_id, 0)
                 lines.append(f"  - raise <总额>（加注至，最小 {min_r}，最大 {max_r}）")
             elif a == ActionType.ALL_IN:
                 lines.append(f"  - all_in（全下 {player.chips}）")
         return "\n".join(lines)
 
     @staticmethod
-    def _get_position_name(seat_index: int, dealer_index: int, total_players: int) -> str:
-        if total_players <= 2:
-            return "小盲/庄家" if seat_index == dealer_index else "大盲"
+    def _get_position_name(seat_index: int, state: GameState) -> str:
+        active = [p for p in state.players if p.chips > 0 or p.is_all_in]
+        active_seats = sorted(p.seat_index for p in active)
+        total = len(active_seats)
+        if total <= 2:
+            return "小盲/庄家" if seat_index == state.dealer_index else "大盲"
 
         positions = ["庄家", "小盲", "大盲", "枪口", "枪口+1", "枪口+2", "中位", "中位+1", "劫位", "关位"]
-        offset = (seat_index - dealer_index) % total_players
-        if offset < len(positions):
-            return positions[offset]
-        return f"座{offset}"
+        try:
+            dealer_pos = active_seats.index(state.dealer_index)
+            seat_pos = active_seats.index(seat_index)
+        except ValueError:
+            return f"座{seat_index}"
+        offset = (seat_pos - dealer_pos) % total
+        return positions[offset] if offset < len(positions) else f"座{offset}"
 
     def build_reveal_prompt(self, player_config: AIPlayerConfig, state: GameState) -> str:
         """Build the reveal prompt with full hand context (same format as game prompt)."""

@@ -33,7 +33,7 @@ const PHASE_LABELS: Record<string, string> = {
 };
 
 export function PokerTable({ gameState, showCards }: Props) {
-  const { players, community_cards, pots, phase, dealer_index, active_player_index } = gameState;
+  const { players, community_cards, pots, phase, dealer_index, active_player_index, small_blind, big_blind, ante } = gameState;
   const totalPot = pots.reduce((sum, pot) => sum + pot.amount, 0);
   const activePlayer = active_player_index == null
     ? null
@@ -76,7 +76,10 @@ export function PokerTable({ gameState, showCards }: Props) {
           <div className="poker-table-center">
             <PotDisplay amount={totalPot} pots={pots} />
             <CommunityCards cards={community_cards} />
-            <div className="phase-badge">{PHASE_LABELS[phase] || phase}</div>
+            <div className="table-info-row">
+              <div className="phase-badge">{PHASE_LABELS[phase] || phase}</div>
+              <div className="blinds-badge">SB {small_blind} / BB {big_blind}{ante ? ` (${ante})` : ''}</div>
+            </div>
           </div>
         </div>
         <div className="poker-table-timer">

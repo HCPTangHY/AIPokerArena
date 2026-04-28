@@ -1,9 +1,18 @@
 import { useRef, useEffect, useState, type KeyboardEvent } from 'react';
 import type { ChatMessage } from '../types/game';
 
+function anonymizeName(_name: string, seed: string) {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
+  }
+  return `观众${Math.abs(hash % 999)}`;
+}
+
 interface Props {
   messages: ChatMessage[];
   onSend?: (message: string) => void;
+  hideNames?: boolean;
 }
 
 function formatMessageTime(timestamp: number) {
@@ -14,7 +23,7 @@ function formatMessageTime(timestamp: number) {
   });
 }
 
-export function ChatPanel({ messages, onSend }: Props) {
+export function ChatPanel({ messages, onSend, hideNames }: Props) {
   const listRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const shouldAutoScrollRef = useRef(true);
@@ -68,11 +77,11 @@ export function ChatPanel({ messages, onSend }: Props) {
             className={`chat-message ${message.is_spectator ? 'is-spectator' : ''}`}
           >
             <div className="chat-avatar" aria-hidden="true">
-              {message.player_name.slice(0, 1).toUpperCase()}
+              {hideNames ? '匿' : (message.player_name || '?').slice(0, 1).toUpperCase()}
             </div>
             <div className="chat-message-body">
               <div className="chat-message-head">
-                <strong>{message.player_name}</strong>
+                <strong>{hideNames ? anonymizeName(message.player_name || '?', message.player_id) : (message.player_name || '?')}</strong>
                 <time>{formatMessageTime(message.timestamp)}</time>
               </div>
               <p>{message.message}</p>

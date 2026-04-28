@@ -2,7 +2,7 @@
 import pytest
 from app.core.engine import PokerEngine
 from app.core.side_pots import calculate_side_pots
-from app.core.evaluator import evaluate_hand, determine_winners, get_hand_name
+from app.core.evaluator import calculate_equity, evaluate_hand, determine_winners, get_hand_name
 from app.models.tournament import TournamentConfig, ActionType, BlindLevel
 from app.models.player import AIPlayerConfig
 from app.models.game import PlayerAction
@@ -111,6 +111,39 @@ class TestHandEvaluator:
         score = evaluate_hand(["Ah", "Kh"], ["Qh", "Jh", "Th", "2d", "3c"])
         name = get_hand_name(score)
         assert "Straight" in name or "Royal" in name or "Flush" in name
+
+    def test_equity_exact_river_winner(self):
+        hole_map = {
+            "A": ["Ah", "Ad"],
+            "B": ["Kh", "Kd"],
+        }
+        community = ["2c", "7d", "9s", "Jc", "Qh"]
+        equity = calculate_equity(hole_map, community, {"A", "B"})
+
+        assert equity == {"A": 100.0, "B": 0.0}
+
+    def test_equity_splits_only_between_tied_winners(self):
+        hole_map = {
+            "A": ["Ah", "5c"],
+            "B": ["Ad", "5d"],
+            "C": ["Kc", "Qd"],
+        }
+        community = ["2h", "3d", "4s", "9c", "Kd"]
+        equity = calculate_equity(hole_map, community, {"A", "B", "C"})
+
+        assert equity == {"A": 50.0, "B": 50.0, "C": 0.0}
+
+    def test_equity_sampling_is_stable(self):
+        hole_map = {
+            "A": ["Ah", "Ad"],
+            "B": ["Kh", "Kd"],
+        }
+
+        equity1 = calculate_equity(hole_map, [], {"A", "B"}, iterations=500)
+        equity2 = calculate_equity(hole_map, [], {"A", "B"}, iterations=500)
+
+        assert equity1 == equity2
+        assert equity1["A"] > equity1["B"]
 
 
 class TestPokerEngine:

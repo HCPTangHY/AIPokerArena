@@ -16,6 +16,8 @@ class ActionType(str, Enum):
     CALL = "call"
     RAISE = "raise"
     ALL_IN = "all_in"
+    SMALL_BLIND = "small_blind"
+    BIG_BLIND = "big_blind"
 
 
 class BlindLevel(BaseModel):

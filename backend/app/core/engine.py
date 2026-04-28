@@ -189,6 +189,11 @@ class PokerEngine:
         self.total_bets[sb_player.player_id] = self.total_bets.get(sb_player.player_id, 0) + sb_paid
         if sb_player.chips == 0:
             sb_player.is_all_in = True
+        sb_player.last_action = PlayerAction(
+            player_id=sb_player.player_id,
+            action_type=ActionType.SMALL_BLIND,
+            amount=sb_paid,
+        )
         events.append({"text": f"{sb_player.display_name} 支付小盲 {sb_paid}", "ts": 0})
         self._current_hand_actions.append({
             "player_id": sb_player.player_id, "player_name": sb_player.display_name,
@@ -204,6 +209,11 @@ class PokerEngine:
         self.total_bets[bb_player.player_id] = self.total_bets.get(bb_player.player_id, 0) + bb_paid
         if bb_player.chips == 0:
             bb_player.is_all_in = True
+        bb_player.last_action = PlayerAction(
+            player_id=bb_player.player_id,
+            action_type=ActionType.BIG_BLIND,
+            amount=bb_paid,
+        )
         events.append({"text": f"{bb_player.display_name} 支付大盲 {bb_paid}", "ts": 0})
         self._current_hand_actions.append({
             "player_id": bb_player.player_id, "player_name": bb_player.display_name,
@@ -485,11 +495,12 @@ class PokerEngine:
         return action.action_type, amount
 
     def _next_active_seat(self, start_index: int) -> int:
-        """Find the next seat with an active (in-tournament) player."""
+        """Find the next seat with an active player still in the hand."""
         n = len(self.players)
         for i in range(1, n + 1):
             idx = (start_index + i) % n
-            if self.players[idx].chips > 0:
+            p = self.players[idx]
+            if p.is_active and not p.is_all_in and p.chips > 0:
                 return idx
         return start_index
 
@@ -543,40 +554,6 @@ class PokerEngine:
         active_can_act = sum(1 for p in active_players if not p.is_all_in and p.chips > 0)
         all_in_count = sum(1 for p in active_players if p.is_all_in)
         return all_in_count >= 1 and active_can_act <= 1
-
-    def _finalise_betting_round(self, events: list[dict]) -> GameState:
-        """Move chips to pot and advance phase."""
-        # Collect all round bets into the pot
-        self.pots = calculate_side_pots(
-            self.total_bets,
-            {p.player_id for p in self.players if p.is_active},
-        )
-
-        # Check if hand is over
-        total_active = sum(1 for p in self.players if p.is_active)
-        active_can_act = sum(1 for p in self.players if p.is_active and not p.is_all_in)
-        all_in_count = sum(1 for p in self.players if p.is_active and p.is_all_in)
-
-        if total_active == 1:
-            # Only one player left — award pot (uncontested or all-in + folds)
-            return self._award_to_last_player(events)
-
-        if active_can_act == 0 and all_in_count >= 2:
-            # Multiple all-in players, no one can act — deal remaining streets then showdown
-            while len(self.community_cards) < 5:
-                if len(self.community_cards) == 0:
-                    self.deal_flop()
-                elif len(self.community_cards) == 3:
-                    self.deal_turn()
-                elif len(self.community_cards) == 4:
-                    self.deal_river()
-            return self.run_showdown()
-
-        if active_can_act == 1 and all_in_count == 0:
-            # Everyone else folded — remaining player wins
-            return self._award_to_last_player(events)
-
-        return self._build_state(events)
 
     def _finalise_betting_round(self, events: list[dict]) -> GameState:
         """Move chips to pot and determine whether betting can continue."""
@@ -736,11 +713,19 @@ class PokerEngine:
 
     def _get_position_name(self, seat_index: int) -> str:
         """Get position name for a seat in the current hand."""
-        total = len(self.players)
+        active = [p for p in self.players if p.chips > 0 or p.is_all_in]
+        active_seats = sorted(p.seat_index for p in active)
+        total = len(active_seats)
         if total <= 2:
             return "小盲/庄家" if seat_index == self.dealer_index else "大盲"
+
         positions = ["庄家", "小盲", "大盲", "枪口", "枪口+1", "枪口+2", "中位", "中位+1", "劫位", "关位"]
-        offset = (seat_index - self.dealer_index) % total
+        try:
+            dealer_pos = active_seats.index(self.dealer_index)
+            seat_pos = active_seats.index(seat_index)
+        except ValueError:
+            return f"座{seat_index}"
+        offset = (seat_pos - dealer_pos) % total
         return positions[offset] if offset < len(positions) else f"座{offset}"
 
     def get_hand_history(self) -> list[dict]:
@@ -770,7 +755,7 @@ class PokerEngine:
             hole_map = {p.player_id: p.hole_cards for p in active_with_cards}
             active_ids = {p.player_id for p in active_with_cards}
             try:
-                equities = calculate_equity(hole_map, self.community_cards, active_ids, iterations=300)
+                equities = calculate_equity(hole_map, self.community_cards, active_ids, iterations=2000)
             except Exception:
                 pass
 

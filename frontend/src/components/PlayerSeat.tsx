@@ -60,7 +60,7 @@ export function PlayerSeat({ player, isDealer, isActive, showCards }: Props) {
       </div>
 
       {player.last_action && (
-        <ActionIndicator action={player.last_action.type} amount={player.last_action.amount} />
+        <ActionIndicator action={player.last_action.type} amount={player.bet_this_round} />
       )}
     </div>
   );

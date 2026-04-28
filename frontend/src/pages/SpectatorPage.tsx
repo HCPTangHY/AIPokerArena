@@ -275,12 +275,22 @@ function MobileTableThinking({
   );
 }
 
+function anonymizeChatName(_name: string, seed: string) {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
+  }
+  return `观众${Math.abs(hash % 999)}`;
+}
+
 function MobileTableChat({
   messages,
   onSend,
+  hideNames,
 }: {
   messages: ChatMessage[];
   onSend: (message: string) => void;
+  hideNames?: boolean;
 }) {
   const listRef = useRef<HTMLDivElement>(null);
   const shouldAutoScrollRef = useRef(true);
@@ -325,7 +335,7 @@ function MobileTableChat({
         ) : (
           messages.slice(-20).map((message, index) => (
             <article className="mobile-chat-snippet" key={`${message.player_id}-${message.timestamp}-${index}`}>
-              <strong>{message.player_name}</strong>
+              <strong>{hideNames ? anonymizeChatName(message.player_name, message.player_id) : message.player_name}</strong>
               <span>{message.message}</span>
             </article>
           ))
@@ -467,6 +477,7 @@ export function SpectatorPage() {
   } = useGameContext();
   const [showDebug, setShowDebug] = useState(false);
   const [showAllCards, setShowAllCards] = useState(false);
+  const [hideChatNames, setHideChatNames] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [showStandings, setShowStandings] = useState(false);
   const [dockTab, setDockTab] = useState<DockTab>('view');
@@ -629,6 +640,9 @@ export function SpectatorPage() {
           <button type="button" className="follow-pill" onClick={() => setShowAllCards((value) => !value)}>
             {showAllCards ? '隐藏' : '亮牌'}
           </button>
+          <button type="button" className="follow-pill" onClick={() => setHideChatNames((value) => !value)}>
+            {hideChatNames ? '显示昵称' : '匿名聊天'}
+          </button>
           <button type="button" className="arena-icon-button" onClick={logout} title={`退出 ${displayName}`} aria-label="退出">
             <ArenaIcon name="logout" />
           </button>
@@ -671,7 +685,7 @@ export function SpectatorPage() {
                 )}
               </div>
             )}
-            <MobileTableChat messages={spectatorMessages} onSend={sendChat} />
+            <MobileTableChat messages={spectatorMessages} onSend={sendChat} hideNames={hideChatNames} />
           </div>
 
           <AnalysisDock gameState={gameState} dockTab={dockTab} onDockTabChange={setDockTab} />
@@ -682,7 +696,7 @@ export function SpectatorPage() {
             <ThinkingPanel thinkingMessages={thinkingMessages} activeThinking={activeThinking} />
           </section>
           <section className="spectator-panel spectator-chat">
-            <ChatPanel messages={spectatorMessages} onSend={sendChat} />
+            <ChatPanel messages={spectatorMessages} onSend={sendChat} hideNames={hideChatNames} />
           </section>
         </aside>
 

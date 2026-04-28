@@ -1,7 +1,14 @@
+import hashlib
 import random
-from treys import Evaluator as TreysEvaluator, Card as TreysCard, Deck as TreysDeck
+from itertools import combinations
+from math import comb
+
+from treys import Card as TreysCard
+from treys import Deck as TreysDeck
+from treys import Evaluator as TreysEvaluator
 
 _treys = TreysEvaluator()
+_FULL_DECK = tuple(TreysDeck.GetFullDeck())
 
 
 def parse_card(card_str: str) -> int:
@@ -46,52 +53,55 @@ def calculate_equity(
     hole_cards_map: dict[str, list[str]],  # player_id -> hole cards
     community_cards: list[str],
     active_player_ids: set[str],
-    iterations: int = 500,
+    iterations: int = 2000,
+    max_exact_combinations: int = 30_000,
 ) -> dict[str, float]:
     """
-    Monte Carlo equity calculation.
+    Calculate showdown equity with treys hand evaluation.
+
+    Exact enumeration is used whenever the remaining board runouts are small
+    enough. Pre-flop can have more than a million possible runouts, so it uses
+    deterministic random sampling to avoid UI jitter while staying fast.
     Returns {player_id: win_percentage} for each active player.
     """
-    if len(active_player_ids) <= 1:
-        pid = next(iter(active_player_ids)) if active_player_ids else ""
-        return {pid: 1.0} if pid else {}
-
-    # Build known cards (exclude from deck)
-    known_ints: set[int] = set()
-    for cards in hole_cards_map.values():
-        for c in cards:
-            known_ints.add(parse_card(c))
-    for c in community_cards:
-        known_ints.add(parse_card(c))
-
-    # Build a fresh deck minus known cards
-    full_deck = TreysDeck.GetFullDeck()
-    deck = [c for c in full_deck if c not in known_ints]
-    # Shuffle once — we'll deal sequentially from different positions
-    random.shuffle(deck)
+    player_ids = [
+        pid for pid in sorted(active_player_ids)
+        if pid in hole_cards_map and len(hole_cards_map[pid]) == 2
+    ]
+    if not player_ids:
+        return {}
+    if len(player_ids) == 1:
+        return {player_ids[0]: 100.0}
 
     needed = 5 - len(community_cards)
-    wins: dict[str, int] = {pid: 0 for pid in active_player_ids}
-    ties: dict[str, int] = {pid: 0 for pid in active_player_ids}
+    if needed < 0:
+        raise ValueError("community_cards cannot contain more than 5 cards")
 
-    comm_ints = [parse_card(c) for c in community_cards]
-    hole_ints_map = {pid: [parse_card(c) for c in cards] for pid, cards in hole_cards_map.items()}
+    known_ints: set[int] = set()
+    for pid in player_ids:
+        for card in hole_cards_map[pid]:
+            card_int = parse_card(card)
+            if card_int in known_ints:
+                raise ValueError(f"duplicate known card: {card}")
+            known_ints.add(card_int)
+    for card in community_cards:
+        card_int = parse_card(card)
+        if card_int in known_ints:
+            raise ValueError(f"duplicate known card: {card}")
+        known_ints.add(card_int)
 
-    for i in range(iterations):
-        # Deal remaining community cards
-        start = (i * needed) % (len(deck) - needed + 1) if len(deck) > needed else 0
-        if start + needed > len(deck):
-            # Re-shuffle and start over
-            random.shuffle(deck)
-            start = 0
+    deck = [card for card in _FULL_DECK if card not in known_ints]
+    comm_ints = [parse_card(card) for card in community_cards]
+    hole_ints_map = {
+        pid: [parse_card(card) for card in hole_cards_map[pid]]
+        for pid in player_ids
+    }
+    shares: dict[str, float] = {pid: 0.0 for pid in player_ids}
 
-        full_comm = comm_ints + deck[start:start + needed]
+    def tally(full_comm: list[int]) -> None:
         best_score = 9999
         best_pids: list[str] = []
-
-        for pid in active_player_ids:
-            if pid not in hole_ints_map:
-                continue
+        for pid in player_ids:
             score = _treys.evaluate(full_comm, hole_ints_map[pid])
             if score < best_score:
                 best_score = score
@@ -99,16 +109,55 @@ def calculate_equity(
             elif score == best_score:
                 best_pids.append(pid)
 
-        if len(best_pids) == 1:
-            wins[best_pids[0]] += 1
-        else:
-            for pid in best_pids:
-                ties[pid] += 1
+        split = 1.0 / len(best_pids)
+        for pid in best_pids:
+            shares[pid] += split
 
-    result: dict[str, float] = {}
-    for pid in active_player_ids:
-        w = wins.get(pid, 0)
-        t = ties.get(pid, 0)
-        result[pid] = round((w + t / len(active_player_ids)) / iterations * 100, 1)
+    total_boards = comb(len(deck), needed) if needed else 1
+    board_count = 0
 
-    return result
+    if needed == 0:
+        tally(comm_ints)
+        board_count = 1
+    elif total_boards <= max_exact_combinations:
+        for draw in combinations(deck, needed):
+            tally(comm_ints + list(draw))
+            board_count += 1
+    else:
+        target = min(max(1, iterations), total_boards)
+        rng = random.Random(_equity_seed(hole_cards_map, community_cards, player_ids, target))
+        seen_draws: set[tuple[int, ...]] = set()
+        attempts = 0
+        max_attempts = target * 8
+
+        while board_count < target and attempts < max_attempts:
+            attempts += 1
+            draw = tuple(sorted(rng.sample(deck, needed)))
+            if draw in seen_draws:
+                continue
+            seen_draws.add(draw)
+            tally(comm_ints + list(draw))
+            board_count += 1
+
+        while board_count < target:
+            tally(comm_ints + rng.sample(deck, needed))
+            board_count += 1
+
+    return {
+        pid: round(shares[pid] / board_count * 100, 1)
+        for pid in player_ids
+    }
+
+
+def _equity_seed(
+    hole_cards_map: dict[str, list[str]],
+    community_cards: list[str],
+    player_ids: list[str],
+    iterations: int,
+) -> int:
+    parts: list[str] = [str(iterations), "board", *community_cards]
+    for pid in player_ids:
+        parts.append(pid)
+        parts.extend(sorted(hole_cards_map[pid]))
+    payload = "|".join(parts).encode("utf-8")
+    return int.from_bytes(hashlib.blake2b(payload, digest_size=8).digest(), "big")
