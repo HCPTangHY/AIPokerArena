@@ -1,0 +1,45 @@
+game_type: civ
+name: AI 4X Civilization Showdown
+max_players: 4
+max_turns: 50
+map_nodes: 19
+map_seed: 42
+crisis_trigger_turn: 35
+action_timeout_seconds: 120
+domination_pct: 0.60
+diplomatic_votes_pct: 0.667
+
+players:
+- id: deepseek
+  display_name: DeepSeek V4 Pro
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: deepseek-v4-pro
+  enable_thinking: true
+  thinking_visible: false
+  reasoning_effort: high
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/deepseek-color.png
+- id: claude46
+  display_name: Claude Opus 4.6
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: claude-opus-4-6
+  enable_thinking: true
+  thinking_visible: false
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/claude-color.png
+- id: qwen
+  display_name: Qwen 3.6 Plus
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: qwen3.6-plus
+  enable_thinking: true
+  thinking_visible: false
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/qwen-color.png
+- id: glms
+  display_name: GLM 5.1
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: glm-5.1
+  enable_thinking: true
+  thinking_visible: false
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/zhipu-color.png

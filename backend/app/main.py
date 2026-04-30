@@ -12,6 +12,7 @@ from app.ws.handlers import auth_service, ws_manager
 from app.ws import handlers as ws_handlers
 from app.core.engine import PokerEngine  # noqa: F401 - registers poker
 from app.core.werewolf_engine import WerewolfEngine  # noqa: F401 - registers werewolf
+from app.core.civ_engine import CivEngine  # noqa: F401 - registers civ
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
 
