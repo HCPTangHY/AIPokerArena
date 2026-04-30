@@ -1,22 +1,25 @@
 import uuid
 from app.core.deck import Deck
 from app.core.evaluator import determine_winners, get_hand_name, evaluate_hand, calculate_equity
+from app.core.game_base import GameEngine, BaseGameState
 from app.models.tournament import Phase, ActionType, TournamentConfig
 from app.models.player import AIPlayerConfig
 from app.models.game import GameState, PlayerState, PlayerAction, Pot
 from app.core.side_pots import calculate_side_pots
 
 
-class PokerEngine:
-    """Manages a single tournament. All state mutations happen here."""
+class PokerEngine(GameEngine):
+    """Manages a single poker tournament. All state mutations happen here."""
+
+    game_type = "poker"
 
     def __init__(self, config: TournamentConfig, players: list[AIPlayerConfig]):
+        super().__init__(config, players)
         if len(players) < 2:
             raise ValueError("At least 2 players required")
         if len(players) > config.max_players:
             raise ValueError(f"Max {config.max_players} players allowed")
 
-        self.config = config
         self.tournament_id = uuid.uuid4().hex[:12]
         self.hand_number = 0
         self.level_index = 0  # index into blind_levels
@@ -92,6 +95,28 @@ class PokerEngine:
     @property
     def players_with_chips(self) -> list[PlayerState]:
         return [p for p in self.players if p.chips > 0]
+
+    # --- GameEngine ABC implementations ---
+
+    def start_game(self) -> BaseGameState:
+        return self.start_tournament()
+
+    def get_state(self) -> BaseGameState:
+        return self._build_state([])
+
+    def is_game_over(self) -> bool:
+        return self.is_tournament_over()
+
+    def get_winner_dict(self) -> dict | None:
+        winner = self.get_winner()
+        if winner:
+            return {"player_id": winner.player_id, "display_name": winner.display_name}
+        return None
+
+    def get_history(self) -> list[dict]:
+        return self.get_hand_history()
+
+    # --- Poker-specific methods ---
 
     def start_tournament(self) -> GameState:
         self.is_running = True
@@ -782,3 +807,8 @@ class PokerEngine:
             players_to_act=set(self.players_to_act),
             equities=equities,
         )
+
+
+# Auto-register poker game type
+from app.core.game_registry import register_game
+register_game("poker", PokerEngine, TournamentConfig)

@@ -69,9 +69,12 @@ class ConnectionManager:
         for ws in dead:
             self.disconnect(ws)
 
+    async def broadcast_to_target_rooms(self, room: str, message: dict):
+        for target_room in self._target_rooms(room):
+            await self.broadcast(target_room, message)
+
     async def broadcast_state(self, room: str, state) -> None:
-        from app.models.game import GameState
-        if isinstance(state, GameState):
+        if hasattr(state, 'to_public_dict'):
             data = state.to_public_dict()
         else:
             data = state
@@ -80,17 +83,19 @@ class ConnectionManager:
             "data": data,
             "timestamp": time.time(),
         }
-        for target_room in self._target_rooms(room):
-            await self.broadcast(target_room, payload)
+        await self.broadcast_to_target_rooms(room, payload)
 
     async def broadcast_event(self, room: str, event_type: str, payload: dict):
+        if hasattr(payload, 'to_public_dict'):
+            payload = payload.to_public_dict()
+        elif not isinstance(payload, dict):
+            payload = {"value": payload}
         message = {
             "type": "game_event",
             "data": {"event_type": event_type, **payload},
             "timestamp": time.time(),
         }
-        for target_room in self._target_rooms(room):
-            await self.broadcast(target_room, message)
+        await self.broadcast_to_target_rooms(room, message)
 
     async def broadcast_chat(
         self,

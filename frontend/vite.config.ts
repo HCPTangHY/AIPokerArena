@@ -5,7 +5,7 @@ const backendTarget = process.env.VITE_POKER_BACKEND ?? 'http://localhost:8002'
 const backendWsTarget = backendTarget.replace(/^http/, 'ws')
 
 export default defineConfig({
-  base: '/poker/',
+  base: '/',
   plugins: [react()],
   build: {
     outDir: '../backend/static',
@@ -19,6 +19,14 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/poker/ws': {
+        target: backendWsTarget,
+        ws: true,
+      },
+      '/werewolf/api': {
+        target: backendTarget,
+        changeOrigin: true,
+      },
+      '/werewolf/ws': {
         target: backendWsTarget,
         ws: true,
       },

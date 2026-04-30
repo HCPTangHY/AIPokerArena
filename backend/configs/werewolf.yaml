@@ -1,0 +1,111 @@
+tournament:
+  game_type: werewolf
+  name: AI Werewolf Tournament
+  board_preset: 预女猎白-9人
+  discussion_rounds: 2
+  sheriff_election: true
+  allow_sheriff_campaign: true
+  max_players: 12
+  action_timeout_seconds: 180
+  night_duration_seconds: 2.0
+  day_duration_seconds: 1.0
+players:
+- id: deepseek-v4p
+  display_name: DeepSeek V4 Pro
+  api_endpoint: https://api.deepseek.com/v1
+  api_key: sk-962c14e4281e4d1dbe3ef4df058263a9
+  model_name: deepseek-v4-pro
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 0
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/deepseek-color.png
+- id: deepseek-v4f
+  display_name: DeepSeek V4 Flash
+  api_endpoint: https://api.deepseek.com/v1
+  api_key: sk-962c14e4281e4d1dbe3ef4df058263a9
+  model_name: deepseek-v4-flash
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 0
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/deepseek-color.png
+- id: claude46
+  display_name: Claude Opus 4.6
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: claude-opus-4-6
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/claude-color.png
+- id: claude47
+  display_name: Claude Opus 4.7
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: claude-opus-4-7
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/claude-color.png
+- id: gpt55
+  display_name: GPT-5.5
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: gpt-5.5
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/openai.png
+- id: kimi
+  display_name: Minimax M2.7
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: minimax-m2.7
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/minimax-color.png
+- id: doubao
+  display_name: Doubao Seed 2.0 Pro
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: Doubao-Seed-2.0-Pro
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvNOcHkiZfMAyxrIDNHbBhxrNVweMjqQF5Zw&s
+- id: qwen
+  display_name: Qwen 3.6 Plus
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: qwen3.6-plus
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/qwen-color.png
+- id: gemini
+  display_name: Gemini 3.1 Pro Preview
+  api_endpoint: https://odysseia.jnai2d9kgnbs6xzx5c.com/uniapi/v1
+  api_key: zk-otkNqiuHHEE9_pC4eW74kgcnuRjxxbZKwLNsByWAmrYH6WOf
+  model_name: gemini-3.1-pro-preview
+  enable_thinking: true
+  thinking_visible: true
+  thinking_budget_tokens: 32767
+  reasoning_effort: high
+  prompt_override: ''
+  avatar_url: https://raw.githubusercontent.com/lobehub/lobe-icons/refs/heads/master/packages/static-png/dark/gemini-color.png

@@ -547,6 +547,100 @@ class AIService:
             raw_response=content,
         )
 
+    # ============================================================
+    # Werewolf-specific methods
+    # ============================================================
+
+    def _parse_werewolf_response(self, content: str, thinking_content: str, player_id: str) -> PlayerAction:
+        """Parse werewolf AI response.
+
+        Werewolf prompts can contain several labels (SPEECH/VOTE/ACTION).
+        Keep the full model output so the engine can parse votes; public
+        speech is cleaned at the engine boundary before being shown to viewers.
+        """
+        return PlayerAction(
+            player_id=player_id,
+            action_type=ActionType.CALL,  # Placeholder, parsed by engine
+            amount=0,
+            thinking_content=thinking_content,
+            raw_response=content.strip(),
+        )
+
+    async def get_action_werewolf(
+        self, player: AIPlayerConfig, system_prompt: str, user_message: str, retries: int = 2,
+    ) -> PlayerAction:
+        provider = self._detect_provider(player.api_endpoint)
+
+        for attempt in range(retries + 1):
+            try:
+                if provider == "claude":
+                    raw = await asyncio.wait_for(
+                        self._call_claude(player, system_prompt, user_message),
+                        timeout=self.timeout,
+                    )
+                elif provider == "gemini":
+                    raw = await asyncio.wait_for(
+                        self._call_gemini(player, system_prompt, user_message),
+                        timeout=self.timeout,
+                    )
+                else:
+                    raw = await asyncio.wait_for(
+                        self._call_openai(player, system_prompt, user_message),
+                        timeout=self.timeout,
+                    )
+                content = self._extract_content(raw, provider)
+                thinking = self._extract_thinking(raw, provider)
+                return self._parse_werewolf_response(content, thinking, player.id)
+            except Exception as e:
+                if attempt == retries:
+                    return PlayerAction(
+                        player_id=player.id, action_type=ActionType.FOLD,
+                        amount=0, thinking_content=f"Error: {e}", raw_response=str(e),
+                    )
+        return PlayerAction(player_id=player.id, action_type=ActionType.FOLD, amount=0)
+
+    async def stream_action_werewolf(
+        self, player: AIPlayerConfig, system_prompt: str, user_message: str,
+        on_thinking: callable = None,
+        on_content: callable = None,
+    ) -> PlayerAction:
+        provider = self._detect_provider(player.api_endpoint)
+        thinking_text = ""
+        content_text = ""
+
+        try:
+            async def consume_stream():
+                nonlocal thinking_text, content_text
+                if provider == "claude":
+                    stream = self._call_claude_stream(player, system_prompt, user_message)
+                elif provider == "gemini":
+                    stream = self._call_gemini_stream(player, system_prompt, user_message)
+                else:
+                    stream = self._call_openai_stream(player, system_prompt, user_message)
+
+                async for chunk in stream:
+                    if chunk.get("thinking"):
+                        thinking_text += chunk["thinking"]
+                        if on_thinking:
+                            maybe_awaitable = on_thinking(thinking_text)
+                            if inspect.isawaitable(maybe_awaitable):
+                                await maybe_awaitable
+                    if chunk.get("content"):
+                        content_text += chunk["content"]
+                        if on_content:
+                            maybe_awaitable = on_content(content_text)
+                            if inspect.isawaitable(maybe_awaitable):
+                                await maybe_awaitable
+
+            await asyncio.wait_for(consume_stream(), timeout=self.timeout)
+            return self._parse_werewolf_response(content_text, thinking_text, player.id)
+        except Exception as e:
+            if content_text.strip() or thinking_text.strip():
+                if thinking_text.strip() and not content_text.strip():
+                    content_text = "ACTION: skip"
+                return self._parse_werewolf_response(content_text, thinking_text or f"Error: {e}", player.id)
+            raise
+
     async def close(self):
         if self.client:
             await self.client.aclose()

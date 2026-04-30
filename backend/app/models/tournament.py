@@ -2,6 +2,11 @@ from enum import Enum
 from pydantic import BaseModel, Field
 
 
+class GameType(str, Enum):
+    POKER = "poker"
+    WEREWOLF = "werewolf"
+
+
 class Phase(str, Enum):
     PRE_FLOP = "pre_flop"
     FLOP = "flop"
@@ -28,6 +33,7 @@ class BlindLevel(BaseModel):
 
 
 class TournamentConfig(BaseModel):
+    game_type: str = "poker"
     name: str = "AI Poker Tournament"
     initial_chips: int = Field(ge=100, le=1000000, default=5000)
     small_blind_initial: int = Field(ge=1, default=10)

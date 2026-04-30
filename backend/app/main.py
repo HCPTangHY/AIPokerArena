@@ -10,7 +10,8 @@ from app.api.routes_config import router as config_router
 from app.api.routes_tournament import router as tournament_router
 from app.ws.handlers import auth_service, ws_manager
 from app.ws import handlers as ws_handlers
-
+from app.core.engine import PokerEngine  # noqa: F401 - registers poker
+from app.core.werewolf_engine import WerewolfEngine  # noqa: F401 - registers werewolf
 
 STATIC_DIR = Path(__file__).parent.parent / "static"
 
@@ -26,21 +27,9 @@ class StaticFilesWithMime(StaticFiles):
         return mime or "application/octet-stream"
 
 
-def build_poker_app() -> FastAPI:
-    """All poker routes live in this sub-app, mounted at /poker."""
-    poker = FastAPI(title="AI Poker Arena - Poker")
+def build_ws_endpoint(game_type: str = "poker"):
+    """Create a WebSocket endpoint function for a specific game type."""
 
-    # API routes
-    poker.include_router(auth_router)
-    poker.include_router(config_router)
-    poker.include_router(tournament_router)
-
-    @poker.get("/api/health")
-    async def health():
-        return {"status": "ok"}
-
-    # WebSocket
-    @poker.websocket("/ws/spectate")
     async def ws_spectate(ws: WebSocket, token: str = Query(...), tournament_id: str = Query("")):
         from app.ws.handlers import WebSocketDisconnect
 
@@ -53,9 +42,9 @@ def build_poker_app() -> FastAPI:
         room = tournament_id or "main"
         await ws_manager.connect(ws, room, {"user_id": user["sub"], "username": user["username"]})
 
-        tourney = ws_handlers.active_tournament
+        tourney = ws_handlers.get_active_tournament(game_type)
         if tourney and tourney.is_running:
-            state = tourney.engine._build_state([])
+            state = tourney.engine.get_state()
             await ws_manager.broadcast_state(room, state)
         await ws_manager.send_room_snapshot(ws, room)
         await ws_manager.broadcast(room, {
@@ -92,11 +81,32 @@ def build_poker_app() -> FastAPI:
         finally:
             ws_manager.disconnect(ws)
 
+    return ws_spectate
+
+
+def build_game_app(game_type: str) -> FastAPI:
+    """Build a sub-app for a given game type."""
+    title = {"poker": "AI Poker Arena", "werewolf": "AI Werewolf Arena"}.get(game_type, f"AI {game_type} Arena")
+    app = FastAPI(title=title)
+
+    # API routes
+    app.include_router(auth_router)
+    app.include_router(config_router)
+    app.include_router(tournament_router)
+
+    @app.get("/api/health")
+    async def health():
+        return {"status": "ok", "game_type": game_type}
+
+    # WebSocket
+    ws_handler = build_ws_endpoint(game_type)
+    app.websocket("/ws/spectate")(ws_handler)
+
     # Static files + SPA
     if STATIC_DIR.exists() and list(STATIC_DIR.iterdir()):
-        poker.mount("/assets", StaticFilesWithMime(directory=STATIC_DIR / "assets"), name="assets")
+        app.mount("/assets", StaticFilesWithMime(directory=STATIC_DIR / "assets"), name=f"assets_{game_type}")
 
-        @poker.get("/{full_path:path}")
+        @app.get("/{full_path:path}")
         async def serve_spa(full_path: str):
             file_path = STATIC_DIR / full_path
             if file_path.is_file():
@@ -105,19 +115,18 @@ def build_poker_app() -> FastAPI:
                 return Response(content=content, media_type=mime or "application/octet-stream")
             return FileResponse(STATIC_DIR / "index.html")
 
-    return poker
+    return app
 
 
-# Top-level app — mount poker sub-app under /poker
 def create_app() -> FastAPI:
-    app = FastAPI(title="HoldenArena")
+    app = FastAPI(title="AI Game Arena")
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         STATIC_DIR.mkdir(parents=True, exist_ok=True)
         yield
-        from app.ws.handlers import set_active_tournament
-        set_active_tournament(None)
+        from app.ws.handlers import clear_active_tournaments
+        clear_active_tournaments()
 
     app.router.lifespan_context = lifespan
 
@@ -129,8 +138,9 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    poker_app = build_poker_app()
-    app.mount("/poker", poker_app)
+    # Mount game sub-apps
+    app.mount("/poker", build_game_app("poker"))
+    app.mount("/werewolf", build_game_app("werewolf"))
 
     return app
 

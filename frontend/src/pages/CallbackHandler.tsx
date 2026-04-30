@@ -5,16 +5,21 @@ export function CallbackHandler() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const gamePrefix = window.location.pathname.split('/').filter(Boolean)[0];
+    const loginPath = gamePrefix === 'poker' || gamePrefix === 'werewolf'
+      ? `/${gamePrefix}/login`
+      : '/login';
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
+    const next = params.get('next') || '/';
 
     if (!token) {
-      navigate('/login');
+      navigate(loginPath);
       return;
     }
 
     localStorage.setItem('token', token);
-    navigate('/');
+    navigate(next.startsWith('/') && !next.startsWith('//') ? next : '/');
   }, [navigate]);
 
   return (

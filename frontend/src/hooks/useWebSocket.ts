@@ -8,13 +8,14 @@ interface UseWebSocketOptions {
   onDisconnect?: () => void;
   enabled?: boolean;
   wsRef?: React.MutableRefObject<WebSocket | null>;
+  gameType?: string;
 }
 
 export function useWebSocket(
   tournamentId: string | null,
   options: UseWebSocketOptions = {},
 ) {
-  const { onMessage, onConnect, onDisconnect, enabled = true, wsRef: externalRef } = options;
+  const { onMessage, onConnect, onDisconnect, enabled = true, wsRef: externalRef, gameType = 'poker' } = options;
   const internalRef = useRef<WebSocket | null>(null);
   const wsRef = externalRef || internalRef;
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -50,7 +51,7 @@ export function useWebSocket(
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const host = window.location.host;
     const roomId = tournamentId ?? '';
-    const url = `${protocol}//${host}/poker/ws/spectate?token=${encodeURIComponent(token)}&tournament_id=${encodeURIComponent(roomId)}`;
+    const url = `${protocol}//${host}/${gameType}/ws/spectate?token=${encodeURIComponent(token)}&tournament_id=${encodeURIComponent(roomId)}`;
 
     const ws = new WebSocket(url);
     wsRef.current = ws;
@@ -88,7 +89,7 @@ export function useWebSocket(
     ws.onerror = () => {
       ws.close();
     };
-  }, [enabled, tournamentId, wsRef]); // stable deps only — no state
+  }, [enabled, gameType, tournamentId, wsRef]); // stable deps only — no state
 
   // Connect on mount and when enabled/tournamentId changes
   useEffect(() => {

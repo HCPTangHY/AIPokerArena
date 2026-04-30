@@ -4,6 +4,19 @@ from pathlib import Path
 import yaml
 from app.models.tournament import TournamentConfig, BlindLevel
 from app.models.player import AIPlayerConfig
+from app.models.werewolf import WerewolfConfig
+
+CONFIGS_DIR = Path(__file__).parent.parent.parent / "configs"
+
+GAME_CONFIG_FILES = {
+    "poker": "tournament.yaml",
+    "werewolf": "werewolf.yaml",
+}
+
+GAME_CONFIG_MODELS = {
+    "poker": TournamentConfig,
+    "werewolf": WerewolfConfig,
+}
 
 
 def _substitute_env(value: str) -> str:
@@ -18,37 +31,45 @@ def _substitute_env(value: str) -> str:
     return re.sub(r'\$\{(\w+)\}', replacer, value)
 
 
-def load_tournament_config(path: str | None = None) -> TournamentConfig:
-    """Load tournament config from YAML file."""
-    if path is None:
-        path = Path(__file__).parent.parent.parent / "configs" / "tournament.yaml"
+def _get_config_path(game_type: str = "poker") -> Path:
+    filename = GAME_CONFIG_FILES.get(game_type, f"{game_type}.yaml")
+    return CONFIGS_DIR / filename
+
+
+def load_tournament_config(game_type: str = "poker", path: str | None = None):
+    """Load tournament config from YAML file. Returns the appropriate config model."""
+    if path is not None:
+        filepath = Path(path)
     else:
-        path = Path(path)
+        filepath = _get_config_path(game_type)
 
-    if not path.exists():
-        return TournamentConfig()
+    config_model = GAME_CONFIG_MODELS.get(game_type, TournamentConfig)
 
-    with open(path, "r", encoding="utf-8") as f:
+    if not filepath.exists():
+        return config_model(game_type=game_type)
+
+    with open(filepath, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
     if not data:
-        return TournamentConfig()
+        return config_model(game_type=game_type)
 
     tournament_data = data.get("tournament", {})
-    return TournamentConfig(**tournament_data)
+    tournament_data.setdefault("game_type", game_type)
+    return config_model(**tournament_data)
 
 
-def load_player_configs(path: str | None = None) -> list[AIPlayerConfig]:
+def load_player_configs(game_type: str = "poker", path: str | None = None) -> list[AIPlayerConfig]:
     """Load AI player configs from YAML file."""
-    if path is None:
-        path = Path(__file__).parent.parent.parent / "configs" / "tournament.yaml"
+    if path is not None:
+        filepath = Path(path)
     else:
-        path = Path(path)
+        filepath = _get_config_path(game_type)
 
-    if not path.exists():
+    if not filepath.exists():
         return []
 
-    with open(path, "r", encoding="utf-8") as f:
+    with open(filepath, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
     if not data:
@@ -64,20 +85,20 @@ def load_player_configs(path: str | None = None) -> list[AIPlayerConfig]:
     return configs
 
 
-def save_tournament_config(config: TournamentConfig, players: list[AIPlayerConfig], path: str | None = None):
+def save_tournament_config(config: TournamentConfig, players: list[AIPlayerConfig], game_type: str = "poker", path: str | None = None):
     """Save tournament + player configs to YAML file."""
-    if path is None:
-        path = Path(__file__).parent.parent.parent / "configs" / "tournament.yaml"
+    if path is not None:
+        filepath = Path(path)
     else:
-        path = Path(path)
+        filepath = _get_config_path(game_type)
 
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
+    filepath.parent.mkdir(parents=True, exist_ok=True)
 
     data = {
         "tournament": config.model_dump(exclude_none=True),
         "players": [p.model_dump() for p in players],
     }
 
-    with open(path, "w", encoding="utf-8") as f:
+    with open(filepath, "w", encoding="utf-8") as f:
         yaml.safe_dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
+

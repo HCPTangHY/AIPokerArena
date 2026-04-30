@@ -60,7 +60,9 @@ export function useAuth() {
   }, []);
 
   const login = useCallback(async () => {
-    const { url } = await api.getLoginUrl();
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get('next') || window.location.pathname || '/';
+    const { url } = await api.getLoginUrl(next);
     window.location.href = url;
   }, []);
 

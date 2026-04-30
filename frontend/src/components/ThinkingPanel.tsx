@@ -13,20 +13,21 @@ function formatStep(index: number) {
 
 export function ThinkingPanel({ thinkingMessages, activeThinking }: Props) {
   const listRef = useRef<HTMLDivElement>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
   const shouldAutoScrollRef = useRef(true);
 
   useEffect(() => {
-    if (shouldAutoScrollRef.current) {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [thinkingMessages, activeThinking]);
+    const node = listRef.current;
+    if (!node || !shouldAutoScrollRef.current) return;
+    requestAnimationFrame(() => {
+      node.scrollTop = node.scrollHeight;
+    });
+  }, [thinkingMessages.length, activeThinking?.text]);
 
   const handleScroll = () => {
     const node = listRef.current;
     if (!node) return;
-    const dist = node.scrollHeight - node.scrollTop - node.clientHeight;
-    shouldAutoScrollRef.current = dist < 32;
+    const distanceFromBottom = node.scrollHeight - node.scrollTop - node.clientHeight;
+    shouldAutoScrollRef.current = distanceFromBottom < 48;
   };
 
   return (
@@ -63,8 +64,6 @@ export function ThinkingPanel({ thinkingMessages, activeThinking }: Props) {
             </div>
           </article>
         )}
-
-        <div ref={bottomRef} />
       </div>
     </div>
   );
